@@ -1,0 +1,4 @@
+scm-api:latest
+git-client:latest
+git:latest
+generic-webhook-trigger:latest

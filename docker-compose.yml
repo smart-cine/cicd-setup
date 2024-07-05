@@ -4,12 +4,37 @@ services:
   jenkins:
     container_name: smartcine-jenkins
     build:
-      context: . # use the current directory as the build contexts
+      context: ./dockerfiles/jenkins # use the current directory as the build contexts
       dockerfile: Dockerfile
     ports:
       - 9996:8080
       - 50000:50000
     volumes:
-      - ./data:/var/jenkins_home
+      - ./volumes/jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
+
+  db:
+    container_name: smartcine-mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dbsmartcinedinhvl
+      MYSQL_DATABASE: smartcine
+    ports:
+      - 3306:3306
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      - ./dockerfiles/mysql/smartcine.initdb.sql:/docker-entrypoint-initdb.d/smartcine.initdb.sql
+
+  phpmyadmin:
+    container_name: smartcine-phpmyadmin
+    image: phpmyadmin
+    ports:
+      - 9997:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=dbsmartcinedinhvl
+    depends_on:
+      - db
