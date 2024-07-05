@@ -3,6 +3,8 @@ services:
   # Setup custom Jenkins with docker-compose
   jenkins:
     container_name: smartcine-jenkins
+    networks:
+      - smartcine-network
     build:
       context: ./dockerfiles/jenkins # use the current directory as the build contexts
       dockerfile: Dockerfile
@@ -17,6 +19,8 @@ services:
   db:
     container_name: smartcine-mysql
     image: mysql
+    networks:
+      - smartcine-network
     environment:
       MYSQL_ROOT_PASSWORD: dbsmartcinedinhvl
       MYSQL_DATABASE: smartcine
@@ -29,6 +33,8 @@ services:
   phpmyadmin:
     container_name: smartcine-phpmyadmin
     image: phpmyadmin
+    networks:
+      - smartcine-network
     ports:
       - 9997:80
     environment:
@@ -38,3 +44,8 @@ services:
       - PMA_PASSWORD=dbsmartcinedinhvl
     depends_on:
       - db
+
+networks:
+  smartcine-network:
+    name: smartcine-network
+    driver: bridge
